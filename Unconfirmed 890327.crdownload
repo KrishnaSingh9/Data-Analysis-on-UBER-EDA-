@@ -1,0 +1,317 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
+# Q1. Show the last 10 records of the dataset.
+# Q2. Show the first 10 records of the dataset
+# Q3. Show the dimension of the dataset.
+# Q4. Show the size of the dataset.
+# Q5. Print the information about all the variables of the data set.
+# Q6. Check for missing values.
+# Q7. How many missing values are present?
+# Q8. Get the initial data (name it 'df') with dropping the NA values
+# Q9. Get the summary of the original data (before dropping the 'na' values).
+# Q10. Check the information of the new dataframe.
+# Q11. Get the unique start destinations
+# Q12. What is the total number of unique start destinations?
+# Q13. Print the total number of unique stop destinations
+# Q14. Print all the Uber trips that has the starting point of San Francisco.
+# Q15. What is the most popular starting point for the Uber drivers?
+# Q16. What is the most popular dropping point for the Uber drivers?
+# Q17. List the most frequent route taken by Uber drivers.
+# Q18. Print all types of purposes for the trip in an array.
+# Q19. Plot a bar graph of Purposes vs Distance.
+# Q20. Print a dataframe of Purposes and the distance travelled for that particular Purpose.
+# Q21. Plot number of trips vs Category of trips.
+# Q22. What is proportion of trips that is Business and what is the proportion of trips that is Personal?
+
+
+# In[2]:
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+df=pd.read_csv("C:\\Users\\Admin\\Desktop\\Python\\uber\\practice_dataset-main\\uberdrive.csv")
+
+
+# In[ ]:
+
+
+# Q1. Show the last 10 records of the dataset.
+# Q2. Show the first 10 records of the dataset
+
+
+# In[4]:
+
+
+df.head(10)
+#df.tail(10)
+
+
+# In[ ]:
+
+
+# Q3. Show the dimension of the dataset.
+
+
+# In[5]:
+
+
+df.shape
+
+
+# In[ ]:
+
+
+# Q4. Show the size of the dataset.
+
+
+# In[6]:
+
+
+df.size
+
+
+# In[ ]:
+
+
+# Q5. Print the information about all the variables of the data set.
+
+
+# In[7]:
+
+
+df.info
+
+
+# In[ ]:
+
+
+# Q6. Check for missing values.
+
+
+# In[10]:
+
+
+df.isnull().values.any()
+
+
+# In[ ]:
+
+
+# Q7. How many missing values are present?
+
+
+# In[11]:
+
+
+df.isnull().values.sum()
+
+
+# In[12]:
+
+
+df_new=df.dropna()
+df_new.isnull().values.any()
+
+
+# In[13]:
+
+
+df.describe()
+
+
+# In[14]:
+
+
+df_new.describe()
+
+
+# In[ ]:
+
+
+# Q11. Get the unique start destinations
+#Note: This is based on the dataframe with 'na' values in the 'START' variable
+
+
+# In[16]:
+
+
+un_start_destination=df["START*"].dropna()
+unique_start=set(un_start_destination)
+unique_start
+
+
+# In[20]:
+
+
+len(unique_start)
+
+
+# In[21]:
+
+
+stop_destination=df["STOP*"].dropna()
+unique_stop=set(stop_destination)
+len(unique_stop)
+
+
+# In[ ]:
+
+
+# Q14. Print all the Uber trips that has the starting point of San Francisco.
+
+
+# In[24]:
+
+
+df[df['START*']=='San Francisco']
+#df.loc[df["START*"]=="San Francisco"]
+
+
+# In[ ]:
+
+
+# Q15. What is the most popular starting point for the Uber drivers?
+
+
+# In[28]:
+
+
+starting_point=df["START*"].dropna()
+df1=pd.DataFrame(starting_point.value_counts())
+df1.sort_values(["START*"],ascending=False)
+df1=df1.reset_index()
+df1=df1.rename(columns={'index':'starting_destination','START*':'Count'})
+#df1
+df1.loc[df1['Count']==max(df1['Count'])]
+
+
+# In[ ]:
+
+
+# Q16. What is the most popular dropping point for the Uber drivers?
+
+
+# In[29]:
+
+
+starting_point=df["STOP*"].dropna()
+df1=pd.DataFrame(starting_point.value_counts())
+df1.sort_values(["STOP*"],ascending=False)
+df1=df1.reset_index()
+df1=df1.rename(columns={'index':'stoping_destination','STOP*':'Count'})
+#df1
+df1.loc[df1['Count']==max(df1['Count'])]
+
+
+# In[ ]:
+
+
+# Q17. List the most frequent route taken by Uber drivers.
+
+
+# In[36]:
+
+
+df2=df.dropna()
+df2=pd.DataFrame(df2.groupby(['START*','STOP*']).size())
+df2=df2.rename(columns={0:'Count'})
+df2=df2.sort_values(['Count'],ascending=False)
+#df2
+df2.loc[df2['Count']==max(df2['Count'])]
+
+
+# In[ ]:
+
+
+# Q18. Print all types of purposes for the trip in an array.
+
+
+# In[55]:
+
+
+print(np.array(df['PURPOSE*'].dropna().unique()))
+df['MILES*'].groupby(df['PURPOSE*']).sum()
+
+
+# In[ ]:
+
+
+# Q19. Plot a bar graph of Purposes vs Distance.
+#using matplotlib
+
+
+# In[42]:
+
+
+df3=pd.DataFrame(df['MILES*'].groupby(df['PURPOSE*']).sum())
+df3.plot(kind='bar')
+plt.show()
+
+
+# In[50]:
+
+
+#using seaborn
+
+df=df.reset_index()
+sns.barplot(x=df['MILES*'],y=df['PURPOSE*'])
+
+
+# In[ ]:
+
+
+# Q20. Print a dataframe of Purposes and the distance travelled for that particular Purpose.
+
+
+# In[54]:
+
+
+df3
+
+
+# In[ ]:
+
+
+# Q21. Plot number of trips vs Category of trips.
+
+
+# In[56]:
+
+
+df.head()
+df5=pd.DataFrame(df['CATEGORY*'].value_counts())
+df5.reset_index()
+
+df5.plot(kind='bar')
+plt.show()
+df5
+
+
+# In[ ]:
+
+
+# Q22. What is proportion of trips that is Business and what is the proportion of trips that is Personal?
+
+
+# In[57]:
+
+
+df6=df.groupby(['CATEGORY*']).sum()
+Business=df6.iloc[0,0]/(df6.iloc[0,0]+df6.iloc[1,0])
+Personal=df6.iloc[1,0]/(df6.iloc[0,0]+df6.iloc[1,0])
+#df
+print("Business:",Business)
+print("Personal",Personal)
+
+
+# In[ ]:
+
+
+
+
